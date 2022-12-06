@@ -1,3 +1,5 @@
+// Import the Audit Service reference and IP address helper functions
+const {audit, clientIpAddress, hostIpAddress} = require('../../lib/pangea');
 // Express docs: http://expressjs.com/en/api.html
 const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
@@ -41,6 +43,14 @@ router.get('/patients', requireToken, (req, res, next) => {
 		// respond with status 200 and JSON of the patients
 		.then((patients) => {
 			console.log("**** Patient Record Accessed ****")
+			audit.log({
+				actor: req.user.email,
+				action: "Record Accessed",
+				status: "Success",
+				target:`${hostIpAddress(req)}`,
+				source:`${clientIpAddress(req)}`,
+				message: `'${req.user.email}' accessed ${patients.length} patient records`,
+			});
 			res.status(200).json({ patients: patients })
 		})
 		// if an error occurs, pass it to the handler
@@ -57,6 +67,14 @@ router.get('/patients/:id', requireToken, (req, res, next) => {
 		// if `findById` is succesful, respond with 200 and "patient" JSON
 		.then((patient) => {
 			console.log("**** Patient Record Accessed ****")
+			audit.log({
+			  actor: req.user.email,
+			  action: "Record Accessed",
+			  status: "Success",
+			  target:`${hostIpAddress(req)}`,
+			  source:`${clientIpAddress(req)}`,
+			  message: `'${req.user.email}' accessed patient record id '${req.params.id}'`,
+			});
 			res.status(200).json({ patient: patient.toObject() })
 	})
 		// if an error occurs, pass it to the handler
@@ -78,6 +96,14 @@ router.post('/patients', requireToken, (req, res, next) => {
 		// respond to succesful `create` with status 201 and JSON of new "patient"
 		.then((patient) => {
 			console.log("**** Patient Record Created ****")
+			audit.log({
+			  actor: req.user.email,
+			  action: "Record Created",
+			  status: "Success",
+			  target:`${hostIpAddress(req)}`,
+			  source:`${clientIpAddress(req)}`,
+			  message: `'${req.user.email}' created patient record id '${req.params.id}'`,
+			});
 			res.status(201).json({ patient: patient.toObject() })
 		})
 		// if an error occurs, pass it off to our error handler
@@ -100,6 +126,14 @@ router.patch('/patients/:id', requireToken, removeBlanks, (req, res, next) => {
 			// it will throw an error if the current user isn't the owner
 			// requireOwnership(req, patient)
 			console.log("**** Patient Record Updated ****")
+			audit.log({
+			  actor: req.user.email,
+			  action: "Record Updated",
+			  status: "Success",
+			  target:`${hostIpAddress(req)}`,
+			  source:`${clientIpAddress(req)}`,
+			  message: `'${req.user.email}' updated patient record id '${req.params.id}'`,
+			});
 			// pass the result of Mongoose's `.update` to the next `.then`
 			return patient.updateOne(req.body.patient)
 		})
@@ -124,6 +158,14 @@ router.patch('/patients/:id/attend', requireToken, removeBlanks, (req, res, next
                 patient.doctors.push(newDoctor)
             }
 						console.log("**** Patient Record Updated ****")
+						audit.log({
+						  actor: req.user.email,
+						  action: "Record Updated",
+						  status: "Success",
+						  target:`${hostIpAddress(req)}`,
+						  source:`${clientIpAddress(req)}`,
+						  message: `'${req.user.email}' updated patient record id '${req.params.id}'`,
+						});
             // return saved patient
             return patient.save()
 		})
@@ -148,6 +190,14 @@ router.delete('/patients/:id', requireToken, (req, res, next) => {
 		// send back 204 and no content if the deletion succeeded
 		.then(() => {
 			console.log("**** Patient Record Deleted ****")
+			audit.log({
+				actor: req.user.email,
+				action: "Record Deleted",
+				status: "Success",
+				target:`${hostIpAddress(req)}`,
+				source:`${clientIpAddress(req)}`,
+				message: `'${req.user.email}' deleted patient record id '${req.params.id}'`,
+			});
 			res.sendStatus(204)
 		})
 		// if an error occurs, pass it to the handler

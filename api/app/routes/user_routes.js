@@ -1,3 +1,6 @@
+// Import the Audit Service reference and IP address helper functions
+const {audit, clientIpAddress, hostIpAddress} = require('../../lib/pangea');
+
 const express = require('express')
 // jsonwebtoken docs: https://github.com/auth0/node-jsonwebtoken
 const crypto = require('crypto')
@@ -38,6 +41,15 @@ router.post('/sign-up', (req, res, next) => {
 				!credentials.password ||
 				credentials.password !== credentials.password_confirmation
 			) {
+				console.log("**** User Create Failed ****")
+				audit.log({
+					actor: user.email,
+					action: "Create User",
+					status: "Failed",
+					target:`${hostIpAddress(req)}`,
+					source:`${clientIpAddress(req)}`,
+					message: `User create failed for '${user.email}'`,
+				});
 				throw new BadParamsError()
 			}
 		})
@@ -56,6 +68,14 @@ router.post('/sign-up', (req, res, next) => {
 		// won't be send because of the `transform` in the User model
 		.then((user) => {
 			console.log("**** User Created ****")
+			audit.log({
+				actor: user.email,
+				action: "Create User",
+				status: "Success",
+				target:`${hostIpAddress(req)}`,
+				source:`${clientIpAddress(req)}`,
+				message: `User '${user.email}' created`,
+			});
 			return res.status(201).json({ user: user.toObject() })
 		})
 		// pass any errors along to the error handler
@@ -74,6 +94,14 @@ router.post('/sign-in', (req, res, next) => {
 			// if we didn't find a user with that email, send 401
 			if (!record) {
 				console.log("**** Invalid Username ****")
+				audit.log({
+					actor: user.email,
+					action: "Sign In",
+					status: "Failed",
+					target:`${hostIpAddress(req)}`,
+					source:`${clientIpAddress(req)}`,
+					message: `User '${user.email}' is invalid`,
+				});
 				throw new BadCredentialsError()
 			}
 			// save the found user outside the promise chain
@@ -89,10 +117,27 @@ router.post('/sign-in', (req, res, next) => {
 				const token = crypto.randomBytes(16).toString('hex')
 				user.token = token
 				console.log("**** User Token created ****")
+			  audit.log({
+			    actor: user.email,
+			    action: "Sign In",
+			    status: "Success",
+					target:`${hostIpAddress(req)}`,
+					source:`${clientIpAddress(req)}`,
+			    message: `User '${user.email}' signed in`,
+			  });
+
 				// save the token to the DB as a property on user
 				return user.save()
 			} else {
 				console.log("**** Invalid Password ****")
+				audit.log({
+					actor: user.email,
+					action: "Sign In",
+					status: "Failed",
+					target:`${hostIpAddress(req)}`,
+					source:`${clientIpAddress(req)}`,
+					message: `User '${user.email}' failed to sign in with an incorrect password`,
+				});
 				// throw an error to trigger the error handler and end the promise chain
 				// this will send back 401 and a message about sending wrong parameters
 				throw new BadCredentialsError()
@@ -123,6 +168,15 @@ router.patch('/change-password', requireToken, (req, res, next) => {
 			// throw an error if the new password is missing, an empty string,
 			// or the old password was wrong
 			if (!req.body.passwords.new || !correctPassword) {
+				console.log("**** User Password change failed****")
+				audit.log({
+					actor: user.email,
+					action: "Password Update",
+					status: "Failed",
+					target:`${hostIpAddress(req)}`,
+					source:`${clientIpAddress(req)}`,
+					message: `User '${user.email}' failed to update their password`,
+				});
 				throw new BadParamsError()
 			}
 		})
@@ -132,6 +186,14 @@ router.patch('/change-password', requireToken, (req, res, next) => {
 			// set and save the new hashed password in the DB
 			user.hashedPassword = hash
 			console.log("**** User Password changed ****")
+			audit.log({
+				actor: user.email,
+				action: "Password Update",
+				status: "Success",
+				target:`${hostIpAddress(req)}`,
+				source:`${clientIpAddress(req)}`,
+				message: `User '${user.email}' updated their password`,
+			});
 			return user.save()
 		})
 		// respond with no content and status 200
@@ -148,6 +210,14 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 		.save()
 		.then(() => {
 			console.log("**** User Token deleted ****")
+			audit.log({
+				actor: req.user.email,
+				action: "Sign out",
+				status: "Success",
+				target:`${hostIpAddress(req)}`,
+				source:`${clientIpAddress(req)}`,
+				message: `User '${req.user.email}' signed out`,
+			});
 			return res.sendStatus(204)
 		})
 		.catch(next)
