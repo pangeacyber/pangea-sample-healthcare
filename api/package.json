@@ -1,0 +1,25 @@
+{
+  "name": "the-medics-app",
+  "version": "1.0.0",
+  "description": "A tool for doctors and nurses to monitor and update patient conditions, medications, treatments, and other critical details.",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node ./app/models/seed.js"
+  },
+  "author": "Larry Mays, Pedro Abreu, Nick Esparza",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "method-override": "^3.0.0",
+    "mongodb": "^4.2.1",
+    "mongoose": "^6.1.1",
+    "passport": "^0.5.0",
+    "passport-http-bearer": "^1.0.1"
+  }
+}

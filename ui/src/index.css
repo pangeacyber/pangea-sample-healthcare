@@ -1,0 +1,113 @@
+html {
+    height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: url('/src/imgs/doctorsmile.jpeg');
+background-repeat: no-repeat; /* Do not repeat the image */
+background-size: cover; /* Resize the background image to cover the entire container */
+background-attachment: fixed;
+}
+.navar-MASTER{
+  color: brown;
+}
+
+.body-home-page{
+  /* height: 1200px; */
+  background-image: linear-gradient(to bottom right, rgb(254, 254, 254),rgba(220, 217, 217, 0.99));
+}
+.copyrights-hm-page{
+  margin-bottom: 0%;
+}
+
+.p-info{
+  font-weight: bold;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* COLOR NAV BAR TOP */
+.navBar-Master{
+  background-color: rgb(58 ,95, 95);
+}
+
+
+
+/* Only contrl the back screen */
+.homeContainerMiddleBody{
+
+/* height: 800px; */
+/* position: fixed; */
+/* bottom: 0%; */
+/* background-attachment:  fixed; */
+  text-align: center;
+  position: relative;
+}
+.hold-afterpicture{
+  height: 700px;
+  /* min-height: 500px; */
+
+}
+.dr-picture{
+  position: relative;
+}
+
+/* size of the text */
+.h2themedics{
+  font-size: 65px;
+}
+/* footer{
+  margin-top: 50%;
+} */
+/* .footerHomeBody{
+  margin-bottom: 0;
+  background-color: aquamarine;
+  justify-content: flex-end;
+<<<<<<< HEAD
+} */
+
+.patient-treatment-cards{
+    
+  justify-content: center;
+  text-align: center;
+  display: flex;
+}
+
+.image{
+  border-radius: 20px;
+}
+
+/* text-info-patient */
+.text-info-patient{
+  font-weight: bold;
+}
+
+/* ADJUSTING PROFILE IMG */
+.profile-img-adjust{
+  border-radius: 20px;
+  background-color: rgba(240, 248, 255, 0);
+}
+
+
+/* SHOWING PATIENTS CARDS */
+.backImg-cards{
+/* background-image: url('/src/imgs/img2.jpeg'); */
+background-repeat: no-repeat; /* Do not repeat the image */
+background-size: cover; /* Resize the background image to cover the entire container */
+/* height: auto; */
+
+}
+
+
+/* class="img-fluid  */
+
