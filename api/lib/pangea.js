@@ -27,5 +27,14 @@ const hostIpAddress = (req) => {
   )
 }
 
+// Read the Redact Auth Token from the environment variable
+const redactToken = process.env.REDACT_AUTH_TOKEN;
+
+// Instantiate a Pangea Configuration object with the end point domain
+const redactConfig = new Pangea.PangeaConfig({ domain: pangeaDomain });
+
+// Instantiate the Redact Service using the auth token and config
+const redact = new Pangea.RedactService(redactToken, redactConfig);
+
 // Export the reference to the AuditService and convenience functions
-module.exports = {audit, clientIpAddress, hostIpAddress}
+module.exports = {audit, redact, clientIpAddress, hostIpAddress}

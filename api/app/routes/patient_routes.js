@@ -1,5 +1,5 @@
 // Import the Audit Service reference and IP address helper functions
-const {audit, clientIpAddress, hostIpAddress} = require('../../lib/pangea');
+const {audit, redact, clientIpAddress, hostIpAddress} = require('../../lib/pangea');
 // Express docs: http://expressjs.com/en/api.html
 const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
@@ -51,7 +51,13 @@ router.get('/patients', requireToken, (req, res, next) => {
 				source:`${clientIpAddress(req)}`,
 				message: `'${req.user.email}' accessed ${patients.length} patient records`,
 			});
-			res.status(200).json({ patients: patients })
+			if(req.user.email.endsWith("@pangea.cloud"))
+				res.status(200).json({ patients: patients })
+			else
+				return redact.redactStructured(patients);
+		}).then((redacted) => {
+			const redactedPatients = redacted.result.redacted_data;
+			res.status(200).json({ patients: redactedPatients })
 		})
 		// if an error occurs, pass it to the handler
 		.catch(next)
@@ -75,8 +81,14 @@ router.get('/patients/:id', requireToken, (req, res, next) => {
 			  source:`${clientIpAddress(req)}`,
 			  message: `'${req.user.email}' accessed patient record id '${req.params.id}'`,
 			});
-			res.status(200).json({ patient: patient.toObject() })
-	})
+			if(req.user.email.endsWith("@pangea.cloud"))
+				res.status(200).json({ patient: patient.toObject() })
+			else
+				return redact.redactStructured(patient);
+		}).then((redacted) => {
+			const redactedPatient = redacted.result.redacted_data;
+			res.status(200).json({ patient: redactedPatient })
+		})
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
