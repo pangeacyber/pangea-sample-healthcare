@@ -19,7 +19,7 @@
     "method-override": "^3.0.0",
     "mongodb": "^4.2.1",
     "mongoose": "^6.1.1",
-    "node-pangea": "^1.0.0",
+    "pangea-node-sdk": "^1.0.0",
     "passport": "^0.5.0",
     "passport-http-bearer": "^1.0.1"
   }
