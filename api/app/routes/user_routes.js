@@ -38,6 +38,7 @@ router.post('/sign-up', (req, res, next) => {
 				!credentials.password ||
 				credentials.password !== credentials.password_confirmation
 			) {
+				console.log("**** User Create Failed ****")
 				throw new BadParamsError()
 			}
 		})
